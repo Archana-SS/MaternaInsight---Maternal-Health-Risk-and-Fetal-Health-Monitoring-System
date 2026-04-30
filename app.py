@@ -1468,7 +1468,7 @@ elif selected == "System Performance Dashboard":
                             font=dict(size=11))
             )
             st.plotly_chart(fig2, use_container_width=True)
-
+        
         st.markdown("#### Fetal Stacking Ensemble — Per Class Breakdown")
         df = pd.DataFrame({
             "Class":     ["Normal (332)",  "Suspect (59)", "Pathological (35)", "Macro Avg"],
@@ -1509,3 +1509,14 @@ elif selected == "System Performance Dashboard":
           }),
             use_container_width=True, hide_index=True
         )
+
+        st.markdown("#### Model Evaluation Charts")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            st.image("images/maternal_roc_curves.png", caption="Maternal ROC Curves (LightGBM)")
+        with col2:
+            st.image("images/fetal_roc_curves.png", caption="Fetal ROC Curves (Stacking Ensemble)")
+
+        st.image("images/fetal_complete_evaluation.png", caption="Fetal Health — All Models Confusion Matrices", use_container_width=True)
+        st.image("images/maternal_complete_evaluation.png", caption="Maternal Health — All Models Confusion Matrices", use_container_width=True)
