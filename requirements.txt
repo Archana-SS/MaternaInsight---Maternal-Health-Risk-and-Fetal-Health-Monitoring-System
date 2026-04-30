@@ -1,0 +1,8 @@
+streamlit
+streamlit-option-menu
+numpy
+pandas
+plotly
+shap
+scikit-learn
+lightgbm
