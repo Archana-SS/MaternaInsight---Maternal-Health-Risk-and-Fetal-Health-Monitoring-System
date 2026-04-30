@@ -36,7 +36,7 @@ MaternaInsight is a clinical decision support tool designed for healthcare profe
 
 | Home | Maternal Risk | Fetal Health |
 |------|--------------|--------------|
-| ![Home]([screenshots/home.png](https://github.com/Archana-SS/MaternaInsight---Maternal-Health-Risk-and-Fetal-Health-Monitoring-System/blob/main/MaternaInsightImages/Home%20Page.png)) | ![Maternal]([screenshots/maternal.png](https://github.com/Archana-SS/MaternaInsight---Maternal-Health-Risk-and-Fetal-Health-Monitoring-System/blob/main/MaternaInsightImages/Maternal%20Health%20Risk%20Page.png)) | ![Fetal]([screenshots/fetal.png](https://github.com/Archana-SS/MaternaInsight---Maternal-Health-Risk-and-Fetal-Health-Monitoring-System/blob/main/MaternaInsightImages/Fetal%20health%20classification%20page.png)) |
+| ![Home](https://github.com/Archana-SS/MaternaInsight---Maternal-Health-Risk-and-Fetal-Health-Monitoring-System/blob/main/MaternaInsightImages/Home%20Page.png)) | ![Maternal](https://github.com/Archana-SS/MaternaInsight---Maternal-Health-Risk-and-Fetal-Health-Monitoring-System/blob/main/MaternaInsightImages/Maternal%20Health%20Risk%20Page.png)) | ![Fetal](https://github.com/Archana-SS/MaternaInsight---Maternal-Health-Risk-and-Fetal-Health-Monitoring-System/blob/main/MaternaInsightImages/Fetal%20health%20classification%20page.png) |
 
 ---
 
