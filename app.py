@@ -1396,18 +1396,16 @@ elif selected == "System Performance Dashboard":
             Intended for academic review and project evaluation.
         </div>""", unsafe_allow_html=True)
 
-        c1, c2, c3, c4 = st.columns(4)
-        for col, (val, label, sub) in zip([c1, c2, c3, c4], [
+        c1, c2 = st.columns(2)
+        for col, (val, label, sub) in zip([c1, c2], [
             ("90.64%", "Maternal Test Accuracy", "LightGBM + Optuna"),
             ("94.13%", "Fetal Test Accuracy",    "Stacking Ensemble"),
-            ("84.70%", "Maternal CV Mean",        "10-Fold ±0.89%"),
-            ("98.49%", "Fetal CV Mean",           "10-Fold ±0.59%"),
         ]):
             col.markdown(f"""
             <div class="metric-card">
                 <div class="metric-value">{val}</div>
                 <div style='font-size:13px; font-weight:600; color:#374151; margin-top:5px;'>{label}</div>
-                <div class="metric-label">{sub}</div>
+            <div class="metric-label">{sub}</div>
             </div>""", unsafe_allow_html=True)
 
         st.markdown("<br>", unsafe_allow_html=True)
