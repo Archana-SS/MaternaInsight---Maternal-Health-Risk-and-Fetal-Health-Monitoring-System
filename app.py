@@ -9,9 +9,7 @@ import shap
 
 warnings.filterwarnings("ignore")
     
-# ─────────────────────────────────────────────
 # PAGE CONFIG
-# ─────────────────────────────────────────────
 st.set_page_config(
     page_title="MaternaInsight — Maternal & Fetal Health",
     page_icon="🏥",
@@ -19,9 +17,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# ─────────────────────────────────────────────
 # CSS — Soft Pink Medical Theme (White / Light)
-# ─────────────────────────────────────────────
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap');
@@ -291,9 +287,7 @@ section[data-testid="stSidebar"] > div {
 </style>
 """, unsafe_allow_html=True)
 
-# ─────────────────────────────────────────────
 # LOAD MODELS
-# ─────────────────────────────────────────────
 @st.cache_resource
 def load_models():
     maternal_model  = pickle.load(open("model/finalized_maternal_model_v12.sav", "rb"))
@@ -304,9 +298,7 @@ def load_models():
 
 maternal_model, maternal_scaler, fetal_model, fetal_scaler = load_models()
 
-# ─────────────────────────────────────────────
-# FEATURE ENGINEERING — MATERNAL (26 features)
-# ─────────────────────────────────────────────
+# FEATURE DERIVATION — MATERNAL (26 features)
 def engineer_maternal_features(age, systolic_bp, diastolic_bp, bs, body_temp, heart_rate):
     d = {}
     d['Age']                  = age
@@ -338,9 +330,7 @@ def engineer_maternal_features(age, systolic_bp, diastolic_bp, bs, body_temp, he
     d['BP_BS_Stress']          = (systolic_bp * bs) / 100
     return np.array(list(d.values())).reshape(1, -1)
 
-# ─────────────────────────────────────────────
-# FEATURE ENGINEERING — FETAL (39 features)
-# ─────────────────────────────────────────────
+# FEATURE DERIVATION — FETAL (39 features)
 def engineer_fetal_features(baseline, accels, fetal_mov, uterine_cont,
                              light_decel, severe_decel, prolonged_decel,
                              abnormal_stv, mean_stv, pct_altv,
@@ -391,9 +381,7 @@ def engineer_fetal_features(baseline, accels, fetal_mov, uterine_cont,
     d['MovementAccelRatio']       = fetal_mov / (accels + 1e-6)
     return np.array(list(d.values())).reshape(1, -1)
 
-# ─────────────────────────────────────────────
 # SHAP EXPLAINABILITY HELPERS
-# ─────────────────────────────────────────────
 @st.cache_resource
 def get_maternal_explainer(_model):
     """Cache the TreeExplainer — expensive to create, reuse across predictions."""
@@ -445,7 +433,6 @@ def render_shap_chart(shap_vals, feature_names, prediction_class, title, top_n=1
         df["Abs"] = df["SHAP"].abs()
         df = df.nlargest(top_n, "Abs").sort_values("SHAP")
  
-        #colors = ["#EF4444" if v > 0 else "#22C55E" for v in df["SHAP"]]
         colors = ["#EC4899" if v > 0 else "#3B82F6" for v in df["SHAP"]]
         labels = [f"+{v:.3f}" if v > 0 else f"{v:.3f}" for v in df["SHAP"]]
  
@@ -476,9 +463,7 @@ def render_shap_chart(shap_vals, feature_names, prediction_class, title, top_n=1
     except Exception as e:
         raise ValueError(f"render_shap_chart failed: {e}")
 
-# ─────────────────────────────────────────────
 # SIDEBAR
-# ─────────────────────────────────────────────
 with st.sidebar:
     st.markdown("""
     <div style='text-align:center; padding:16px 0 8px 0;'>
@@ -536,10 +521,7 @@ with st.sidebar:
     </div>        
     """, unsafe_allow_html=True)
 
-
-# ═════════════════════════════════════════════
 # PAGE: ABOUT
-# ═════════════════════════════════════════════
 if selected == "About":
     st.markdown('<div class="section-header">Welcome to MaternaInsight 🏥</div>', unsafe_allow_html=True)
     st.markdown('<div class="section-sub">An end-to-end Machine Learning and Streamlit based clinical decision support system for maternal health risk assessment and fetal health classification. Built for healthcare professionals, nurses, and rural health workers.</div>', unsafe_allow_html=True)
@@ -768,10 +750,7 @@ if selected == "About":
     </div>
     """, unsafe_allow_html=True)
 
-
-# ═════════════════════════════════════════════
 # PAGE: MATERNAL RISK
-# ═════════════════════════════════════════════
 elif selected == "Maternal Risk":
     st.markdown('<div class="section-header">🤱 Maternal Health Risk Prediction</div>', unsafe_allow_html=True)
     st.markdown('<div class="section-sub">Enter the patient\'s clinical parameters. The model classifies risk as Low, Mid, or High using LightGBM with Optuna-tuned hyperparameters (90.64% accuracy).</div>', unsafe_allow_html=True)
@@ -858,46 +837,6 @@ elif selected == "Maternal Risk":
                         or hospital without delay.</div>
                     </div>""", unsafe_allow_html=True)
 
-            # with r2:
-            #     risk_signals = []
-            #     if systolic_bp > 140: risk_signals.append(("⚠️", "Hypertension",    "SBP > 140 mmHg"))
-            #     if systolic_bp < 90:  risk_signals.append(("⚠️", "Hypotension",     "SBP < 90 mmHg"))
-            #     if bs > 7.8:          risk_signals.append(("⚠️", "High Glucose",    "BS > 7.8 mmol/L"))
-            #     if body_temp > 37.5:  risk_signals.append(("🌡️", "Elevated Temp",   "Temp > 37.5°C"))
-            #     if heart_rate > 100:  risk_signals.append(("💓", "Tachycardia",     "HR > 100 bpm"))
-            #     if heart_rate < 60:   risk_signals.append(("💓", "Bradycardia",     "HR < 60 bpm"))
-            #     if age < 20:          risk_signals.append(("👩", "Teen Pregnancy",  "Age < 20 years"))
-            #     if age > 35:          risk_signals.append(("👩", "Advanced Age",    "Age > 35 years"))
-
-            #     st.markdown("""
-            #     <div class="info-card">
-            #         <div style='font-size:14px; font-weight:700; color:#9D174D; margin-bottom:12px;'>
-            #             📋 Clinical Signal Summary
-            #         </div>
-            #     """, unsafe_allow_html=True)
-
-            #     if risk_signals:
-            #         for icon, name, detail in risk_signals:
-            #             st.markdown(f"""
-            #             <div style='display:flex; align-items:center; gap:10px; padding:6px 0;
-            #                         border-bottom:1px solid #FFF0F5;'>
-            #                 <span style='font-size:16px;'>{icon}</span>
-            #                 <div>
-            #                     <span style='font-size:13px; font-weight:600; color:#B45309;'>{name}</span>
-            #                     <span style='font-size:12px; color:#9CA3AF;'> — {detail}</span>
-            #                 </div>
-            #             </div>""", unsafe_allow_html=True)
-            #     else:
-            #         st.markdown("""
-            #         <div style='display:flex; align-items:center; gap:10px; padding:8px 0;'>
-            #             <span style='font-size:20px;'>✅</span>
-            #             <span style='font-size:13px; font-weight:600; color:#059669;'>
-            #                 All parameters within normal ranges
-            #             </span>
-            #         </div>""", unsafe_allow_html=True)
-
-            #     st.markdown("</div>", unsafe_allow_html=True)
-
             st.markdown("""
             <div class="disclaimer">
                 ⚠️ This prediction is for clinical decision support only.
@@ -948,9 +887,7 @@ elif selected == "Maternal Risk":
             st.error(f"Prediction error: {e}")
 
 
-# ═════════════════════════════════════════════
 # PAGE: FETAL HEALTH
-# ═════════════════════════════════════════════
 elif selected == "Fetal Health":
     st.markdown('<div class="section-header">👶 Fetal Health Classification</div>', unsafe_allow_html=True)
     st.markdown('<div class="section-sub">Enter CTG (Cardiotocography) measurements from the monitor. The Stacking Ensemble model classifies fetal condition as Normal, Suspect, or Pathological (94.13% accuracy).</div>', unsafe_allow_html=True)
@@ -1058,45 +995,6 @@ elif selected == "Fetal Health":
                         fetal distress — urgent clinical intervention needed.</div>
                     </div>""", unsafe_allow_html=True)
 
-            # with r2:
-            #     risk_flags = []
-            #     if severe_decel > 0:    risk_flags.append(("📉", "Severe Decelerations",   "Present in trace"))
-            #     if prolonged_decel > 0: risk_flags.append(("📉", "Prolonged Decelerations","Present in trace"))
-            #     if baseline > 160:      risk_flags.append(("💓", "Fetal Tachycardia",      "FHR > 160 bpm"))
-            #     if baseline < 110:      risk_flags.append(("💓", "Fetal Bradycardia",      "FHR < 110 bpm"))
-            #     if pct_altv > 50:       risk_flags.append(("〰️", "High Abnormal LTV",      "> 50% of time"))
-            #     if abnormal_stv > 70:   risk_flags.append(("〰️", "High Abnormal STV",      "> 70%"))
-            #     if accels < 0.001:      risk_flags.append(("📊", "Low Accelerations",      "< 0.001"))
-
-            #     st.markdown("""
-            #     <div class="info-card">
-            #         <div style='font-size:14px; font-weight:700; color:#9D174D; margin-bottom:12px;'>
-            #             📋 CTG Signal Flags
-            #         </div>
-            #     """, unsafe_allow_html=True)
-
-            #     if risk_flags:
-            #         for icon, name, detail in risk_flags:
-            #             st.markdown(f"""
-            #             <div style='display:flex; align-items:center; gap:10px; padding:6px 0;
-            #                         border-bottom:1px solid #FFF0F5;'>
-            #                 <span style='font-size:16px;'>{icon}</span>
-            #                 <div>
-            #                     <span style='font-size:13px; font-weight:600; color:#B45309;'>{name}</span>
-            #                     <span style='font-size:12px; color:#9CA3AF;'> — {detail}</span>
-            #                 </div>
-            #             </div>""", unsafe_allow_html=True)
-            #     else:
-            #         st.markdown("""
-            #         <div style='display:flex; align-items:center; gap:10px; padding:8px 0;'>
-            #             <span style='font-size:20px;'>✅</span>
-            #             <span style='font-size:13px; font-weight:600; color:#059669;'>
-            #                 No critical CTG flags detected
-            #             </span>
-            #         </div>""", unsafe_allow_html=True)
-
-            #     st.markdown("</div>", unsafe_allow_html=True)
-
             st.markdown("""
             <div class="disclaimer">
                 ⚠️ CTG interpretation requires clinical expertise. All Suspect and Pathological
@@ -1156,21 +1054,14 @@ elif selected == "Fetal Health":
             st.error(f"Prediction error: {e}")
 
 
-# ═════════════════════════════════════════════
 # PAGE: DASHBOARD
-# ═════════════════════════════════════════════
-# ═════════════════════════════════════════════
-# PAGE: DASHBOARD
-# ═════════════════════════════════════════════
 elif selected == "System Performance Dashboard":
     st.markdown('<div class="section-header">📊 Model Insights & Clinical Reference</div>', unsafe_allow_html=True)
     st.markdown('<div class="section-sub">Clinical reference guide and model performance information for MaternaInsight.</div>', unsafe_allow_html=True)
 
     tab_clinical, tab_technical = st.tabs(["🏥 Clinical Reference", "🔬 Technical Details"])
 
-    # ─────────────────────────────────────────
     # TAB 1 — CLINICAL REFERENCE
-    # ─────────────────────────────────────────
     with tab_clinical:
 
         # ── Intended Use ──
@@ -1386,9 +1277,7 @@ elif selected == "System Performance Dashboard":
         </div>
         """, unsafe_allow_html=True)
 
-    # ─────────────────────────────────────────
-    # TAB 2 — TECHNICAL DETAILS (unchanged)
-    # ─────────────────────────────────────────
+    # TAB 2 — TECHNICAL DETAILS
     with tab_technical:
         st.markdown("""
         <div class="section-sub" style='margin-top:8px;'>
